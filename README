@@ -1,0 +1,4 @@
+Code to match haloes between three AHF_halos files. If a halo is
+doubly-matched, then all matches to that halo are discarded.
+
+Usage: ./match <AHF_halos1> <AHF_halos2> <AHF_halos3> <iout>

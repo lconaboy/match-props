@@ -1,0 +1,5 @@
+#! /bin/bash
+
+rm -f match
+gcc -O0 -Wall main.c read_ahf.c -o match
+./match same_vtf unbiased biased 11
