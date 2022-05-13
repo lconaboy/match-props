@@ -76,8 +76,11 @@ void read_halos(char *infile)
      /* extract information from last read dummyline */
      //ss/canf(dummyline,"%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",&npart,&nvpart,&Xc,&Yc,&Zc,&VXc,&VYc,&VZc,&Mvir,&Rvir);
      sscanf(dummyline,"%ld %ld %ld %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %ld %lf",&haloID,&hostHalo,&numSubStruct,&Mvir,&npart,&Xc,&Yc,&Zc,&VXc,&VYc,&VZc,&Rvir,&Rmax,&r2,&mbp_offset,&com_offset,&Vmax,&v_esc,&sigV,&lambda,&lambdaE,&Lx,&Ly,&Lz,&b,&c,&Eax,&Eay,&Eaz,&Ebx,&Eby,&Ebz,&Ecx,&Ecy,&Ecz,&ovdens,&nbins,&fMhires);
-     
-     if (fMhires > UNCONTAM) nhalos_unc++;
+
+     // hostHalo is 0 or -1 if it is not a subhalo
+     if (hostHalo < 1) {
+       if (fMhires > UNCONTAM) nhalos_unc++;
+     }
    }
 
   // Assign number of uncontaminated haloes to nhalos
@@ -101,25 +104,27 @@ void read_halos(char *infile)
      sscanf(dummyline,"%ld %ld %ld %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %ld %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",&haloID,&hostHalo,&numSubStruct,&Mvir,&npart,&Xc,&Yc,&Zc,&VXc,&VYc,&VZc,&Rvir,&Rmax,&r2,&mbp_offset,&com_offset,&Vmax,&v_esc,&sigV,&lambda,&lambdaE,&Lx,&Ly,&Lz,&b,&c,&Eax,&Eay,&Eaz,&Ebx,&Eby,&Ebz,&Ecx,&Ecy,&Ecz,&ovdens,&nbins,&fMhires,&Ekin,&Epot,&SurfP,&Phi0,&cNFW,&n_gas,&M_gas,&lambda_gas,&lambdaE_gas,&Lx_gas,&Ly_gas,&Lz_gas,&b_gas,&c_gas,&Eax_gas,&Eay_gas,&Eaz_gas,&Ebx_gas,&Eby_gas,&Ebz_gas,&Ecx_gas,&Ecy_gas,&Ecz_gas,&Ekin_gas,&Epot_gas,&n_star,&M_star);
      // sscanf(dummyline,"%ld %ld %ld %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %ld %lf",&haloID,&hostHalo,&numSubStruct,&Mvir,&npart,&Xc,&Yc,&Zc,&VXc,&VYc,&VZc,&Rvir,&Rmax,&r2,&mbp_offset,&com_offset,&Vmax,&v_esc,&sigV,&lambda,&lambdaE,&Lx,&Ly,&Lz,&b,&c,&Eax,&Eay,&Eaz,&Ebx,&Eby,&Ebz,&Ecx,&Ecy,&Ecz,&ovdens,&nbins,&fMhires);
 
-     if (fMhires > UNCONTAM) {
-       M = Mvir - M_gas - M_star;  // DM mass
+          // hostHalo is 0 or -1 if it is not a subhalo
+     if (hostHalo < 1) {
+       if (fMhires > UNCONTAM) {
+	 M = Mvir - M_gas - M_star;  // DM mass
 
-       /* transfer info to halo structure */
-       halo[_ihalo].npart  = (long) npart;
-       halo[_ihalo].haloID = (long) haloID;
-       halo[_ihalo].Xc     = Xc;
-       halo[_ihalo].Yc     = Yc;
-       halo[_ihalo].Zc     = Zc;
-       halo[_ihalo].Rvir   = Rvir;
-       halo[_ihalo].Mvir   = M; 
-       halo[_ihalo].sigV   = sigV; 
-       halo[_ihalo].Vx     = VXc;
-       halo[_ihalo].Vy     = VYc;
-       halo[_ihalo].Vz     = VZc;
-       _ihalo++;
+	 /* transfer info to halo structure */
+	 halo[_ihalo].npart  = (long) npart;
+	 halo[_ihalo].haloID = haloID;  // this is already long
+	 halo[_ihalo].Xc     = Xc;
+	 halo[_ihalo].Yc     = Yc;
+	 halo[_ihalo].Zc     = Zc;
+	 halo[_ihalo].Rvir   = Rvir;
+	 halo[_ihalo].Mvir   = M; 
+	 halo[_ihalo].sigV   = sigV; 
+	 halo[_ihalo].Vx     = VXc;
+	 halo[_ihalo].Vy     = VYc;
+	 halo[_ihalo].Vz     = VZc;
+	 _ihalo++;
+       }
      }
-   }
-  
+   }  
   fclose(fpin);
   
   printf("-- done with %s\n", infile);
